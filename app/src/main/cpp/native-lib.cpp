@@ -18,7 +18,8 @@ Java_com_example_myapplication_MainActivity_fetchAmenitiesPlainTextNative(
         jdouble radius) {
 
     AmenityService amenityServ;
-    auto amenities = amenityServ.fetchNearbyAmenities(lat, lon, radius);
+    std::string errorMsg;
+    auto amenities = amenityServ.fetchNearbyAmenities(lat, lon, radius, errorMsg);
 
     std::map<std::string, std::vector<Amenity>> amenitiesGroup;
     for (const auto& item : amenities) {
@@ -26,18 +27,22 @@ Java_com_example_myapplication_MainActivity_fetchAmenitiesPlainTextNative(
     }
 
     std::ostringstream ss;
-    ss << "my location: " << lat << ", " << lon << "\n";
-    ss << "\ntotal foodie places: " << amenities.size() << "\n\n";
+    if (!errorMsg.empty()) {
+        ss << "server busy :(" << "\n\n";
+    }
+
+    ss << "total foodie places: " << amenities.size() << "\n\n";
 
     for (const auto& [type, items] : amenitiesGroup) {
         ss << type << ": " << items.size() << "\n";
         for (const auto& item : items) {
-            ss << "  " << item.name << " - ";
+            ss << "  ";
             if (item.distance < 1.0) {
-                ss << std::fixed << std::setprecision(2) << item.distance * 1000.0 << " m\n";
+                ss << std::fixed << std::setprecision(2) << item.distance * 1000.0 << " m";
             } else {
-                ss << std::fixed << std::setprecision(2) << item.distance << " km\n";
+                ss << std::fixed << std::setprecision(2) << item.distance << " km";
             }
+            ss << " - " << item.name << "\n";
         }
         ss << "\n";
     }

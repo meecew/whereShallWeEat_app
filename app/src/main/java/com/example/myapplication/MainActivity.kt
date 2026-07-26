@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
             val lon = etLon.text.toString().toDoubleOrNull() ?: 0.0
             val radius = etRadius.text.toString().toDoubleOrNull() ?: 1000.0
 
-            tvConsole.text = "> Fetching data from Overpass API...\n"
+            tvConsole.text = "getting data!\n"
 
             thread {
                 val plainTextResult = fetchAmenitiesPlainTextNative(lat, lon, radius)
@@ -58,7 +58,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnIpLocation.setOnClickListener {
-            tvConsole.text = "> Resolving location via IP...\n"
 
             thread {
                 val result = getIpLocationNative()
@@ -70,9 +69,9 @@ class MainActivity : AppCompatActivity() {
                     if (success) {
                         etLat.setText(lat.toString())
                         etLon.setText(lon.toString())
-                        tvConsole.text = "> IP Location Found: $lat, $lon\n"
+                        tvConsole.text = "IP location found\n"
                     } else {
-                        tvConsole.text = "> Failed to fetch IP location.\n"
+                        tvConsole.text = "failed to get IP location.\n"
                     }
                 }
             }
@@ -84,7 +83,6 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            tvConsole.text = "> Getting GPS Location...\n"
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
                     val lat = location.latitude
@@ -101,11 +99,11 @@ class MainActivity : AppCompatActivity() {
                         runOnUiThread {
                             etLat.setText(nativeLat.toString())
                             etLon.setText(nativeLon.toString())
-                            tvConsole.text = "> GPS Location (via Native Service): $nativeLat, $nativeLon\n"
+                            tvConsole.text = "GPS location found\n"
                         }
                     }
                 } else {
-                    tvConsole.text = "> GPS location not available (ensure GPS is on).\n"
+                    tvConsole.text = "failed to get GPS location\n"
                 }
             }
         }

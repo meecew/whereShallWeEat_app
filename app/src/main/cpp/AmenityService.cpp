@@ -41,10 +41,14 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::stri
     return total_size;
 }
 
-std::vector<Amenity> AmenityService::fetchNearbyAmenities(double lat, double lon, double radius) {
+std::vector<Amenity> AmenityService::fetchNearbyAmenities(double lat, double lon, double radius, std::string& outError) {
     std::vector<Amenity> amenities;
+    outError = ""; // Clear error
     CURL* curl = curl_easy_init();
-    if (!curl) return amenities;
+    if (!curl) {
+        outError = "CURL init failed";
+        return amenities;
+    }
 
     std::string url = "http://overpass-api.de/api/interpreter";
     std::string responseBuffer;
@@ -59,7 +63,7 @@ std::vector<Amenity> AmenityService::fetchNearbyAmenities(double lat, double lon
     curl_free(encodedQuery);
 
     struct curl_slist* headers = NULL;
-    headers = curl_slist_append(headers, "User-Agent: myApp/1.0");
+    headers = curl_slist_append(headers, "User-Agent: whereShallWeEat/1.0");
 
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
@@ -98,13 +102,28 @@ std::vector<Amenity> AmenityService::fetchNearbyAmenities(double lat, double lon
                     }
                 }
             }
+
+            if (amenities.empty() && responseBuffer.find("remark") != std::string::npos) {
+                 // Check for specific Overpass errors like "Rate limit reached" or "Server busy"
+                 if (responseBuffer.find("busy") != std::string::npos) {
+                     outError = "Server is too busy. Please try again in 30 seconds.";
+                 } else if (responseBuffer.find("rate limit") != std::string::npos) {
+                     outError = "Rate limit reached. Slow down!";
+                 }
+            }
+
         } catch (const json::parse_error& e) {
             LOGE("JSON parse error: %s", e.what());
-            std::cerr << "JSON parse error: " << e.what() << std::endl;
-            std::cerr << responseBuffer << std::endl;
-            std::cerr << "server is too busy";
+            if (responseBuffer.find("Rate limit") != std::string::npos ||
+                responseBuffer.find("busy") != std::string::npos ||
+                responseBuffer.find("Too Many Requests") != std::string::npos) {
+                outError = "Server is busy or Rate Limit reached.";
+            } else {
+                outError = "Failed to parse server response.";
+            }
         }
     } else {
+        outError = "Network error: " + std::string(curl_easy_strerror(res));
         LOGE("CURL failed: %s", curl_easy_strerror(res));
     }
     std::sort(amenities.begin(), amenities.end(), [](const Amenity& a, const Amenity& b) {return a.distance < b.distance;});

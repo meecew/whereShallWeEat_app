@@ -22,7 +22,7 @@ public:
         "restaurant"
     };
     
-    std::vector<Amenity> fetchNearbyAmenities(double lat, double lon, double radius);
+    std::vector<Amenity> fetchNearbyAmenities(double lat, double lon, double radius, std::string& outError);
 };
 
 #endif
