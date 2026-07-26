@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="hint_lat">Lat</string>
+    <string name="hint_lon">Lon</string>
+    <string name="hint_radius">Rad(m)</string>
+    <string name="btn_fetch">Fetch Foodies</string>
+    <string name="btn_ip_location">Get IP Location</string>
+    <string name="btn_gps_location">Get GPS Location</string>
+    <string name="console_ready">> App Ready. Enter coordinates and press Fetch Foodies&#8230;</string>
+</resources>
