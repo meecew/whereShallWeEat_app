@@ -113,9 +113,9 @@ Java_com_example_myapplication_MainActivity_fetchRandomAmenityNative(
 
     std::ostringstream ss;
     if (!errorMsg.empty()) {
-        ss << "server busy :(" << "\n\n";
+        ss << "server busy :(" << std::endl << std::endl;
     } else if (amenities.empty()) {
-        ss << "theres nothing here bro " << radius << "m\n";
+        ss << "theres nothing here bro " << std::endl;
     } else {
         std::random_device rd;
         std::mt19937 gen(rd());
