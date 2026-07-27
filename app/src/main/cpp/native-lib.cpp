@@ -50,7 +50,7 @@ Java_com_example_myapplication_MainActivity_fetchAmenitiesPlainTextNative(
             } else {
                 ss << std::fixed << std::setprecision(2) << item.distance << " km";
             }
-            ss << " - <a href=\"geo:" << item.lat << "," << item.lon << "?q=" << item.lat << "," << item.lon << "(" << item.name << ")\">" << item.name << "</a>\n";
+            ss << " - <a href=\"geo:" << std::fixed << std::setprecision(6) << item.lat << "," << item.lon << "?q=" << item.lat << "," << item.lon << "(" << item.name << ")\">" << item.name << "</a>\n";
         }
         ss << "\n";
     }
@@ -143,7 +143,7 @@ Java_com_example_myapplication_MainActivity_fetchRandomAmenityNative(
                 } else {
                     ss << std::fixed << std::setprecision(2) << item.distance << " km";
                 }
-                ss << " - <a href=\"geo:" << item.lat << "," << item.lon << "?q=" << item.lat << "," << item.lon << "(" << item.name << ")\">" << item.name << "</a>";
+                ss << " - <a href=\"geo:" << std::fixed << std::setprecision(6) << item.lat << "," << item.lon << "?q=" << item.lat << "," << item.lon << "(" << item.name << ")\">" << item.name << "</a>";
 
                 if (isPicked) ss << std::endl << "<font color='#FF5722'><b>^^^^THIS GUY RIGHT HERE!!</b></font>";
                 ss << "\n";
