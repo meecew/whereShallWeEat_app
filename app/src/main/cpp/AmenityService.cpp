@@ -2,12 +2,12 @@
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
 #include <android/log.h>
+#include <algorithm>
 #include "AmenityService.h"
 
 #define LOG_TAG "AmenityService"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
-
 
 using json = nlohmann::json;
 
@@ -41,12 +41,17 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::stri
     return total_size;
 }
 
-std::vector<Amenity> AmenityService::fetchNearbyAmenities(double lat, double lon, double radius, std::string& outError) {
+std::vector<Amenity> AmenityService::fetchNearbyAmenities(double lat, double lon, double radius, std::string& outError, AAssetManager* assetManager) {
+    // 1. Check if we are in British Columbia for offline mode
+    if (isInsideBC(lat, lon)) {
+        return fetchFromLocalJson(assetManager, lat, lon, radius);
+    }
+
+
     std::vector<Amenity> amenities;
-    outError = ""; // Clear error
+    outError = "";
     CURL* curl = curl_easy_init();
     if (!curl) {
-        outError = "CURL init failed";
         return amenities;
     }
 
@@ -132,4 +137,72 @@ std::vector<Amenity> AmenityService::fetchNearbyAmenities(double lat, double lon
     curl_easy_cleanup(curl);
 
     return amenities;
+}
+
+bool AmenityService::isInsideBC(double lat, double lon) {
+    // Rough bounding box for British Columbia
+    return (lat >= 48.3 && lat <= 60.0 && lon >= -139.0 && lon <= -114.0);
+}
+
+std::vector<Amenity> AmenityService::fetchFromLocalJson(AAssetManager* assetManager, double userLat, double userLon, double radius) {
+    std::vector<Amenity> results;
+    if (!assetManager) {
+        LOGE("AssetManager is null!");
+        return results;
+    }
+
+    // 1. Open the local file from assets
+    AAsset* asset = AAssetManager_open(assetManager, "bc_foodies_database.json", AASSET_MODE_BUFFER);
+    if (!asset) {
+        LOGE("Could not open local BC database asset!");
+        return results;
+    }
+
+    // 2. Read the entire file into memory
+    off_t size = AAsset_getLength(asset);
+    std::string buffer(size, '\0');
+    AAsset_read(asset, &buffer[0], size);
+    AAsset_close(asset);
+
+    try {
+        // 3. Parse the JSON
+        json data = json::parse(buffer);
+        double radiusInKm = radius / 1000.0;
+
+        LOGI("Parsing local JSON with %zu entries...", data.size());
+
+        for (const auto& item : data) {
+            try {
+                double itemLat = item["lat"].get<double>();
+                double itemLon = item["lon"].get<double>();
+
+                // 4. Calculate distance
+                double dist = haversine(userLat, userLon, itemLat, itemLon);
+
+                // 5. Only include if within the requested radius
+                if (dist <= radiusInKm) {
+                    Amenity am;
+                    am.name = item.value("name", "Unnamed");
+                    am.type = item.value("type", "food");
+                    am.lat = itemLat;
+                    am.lon = itemLon;
+                    am.distance = dist;
+                    results.push_back(am);
+                }
+            } catch (const std::exception& inner) {
+                // Skip malformed entries
+            }
+        }
+    } catch (const json::parse_error& e) {
+        LOGE("JSON Parse Error: %s", e.what());
+    } catch (const std::exception& e) {
+        LOGE("Error parsing local JSON: %s", e.what());
+    }
+
+    // Sort by distance
+    std::sort(results.begin(), results.end(), [](const Amenity& a, const Amenity& b) {
+        return a.distance < b.distance;
+    });
+
+    return results;
 }

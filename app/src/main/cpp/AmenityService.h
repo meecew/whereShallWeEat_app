@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <unordered_set>
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
 
 struct Amenity {
     std::string name;
@@ -22,7 +24,11 @@ public:
         "restaurant"
     };
     
-    std::vector<Amenity> fetchNearbyAmenities(double lat, double lon, double radius, std::string& outError);
+    std::vector<Amenity> fetchNearbyAmenities(double lat, double lon, double radius, std::string& outError, AAssetManager* assetManager);
+
+private:
+    std::vector<Amenity> fetchFromLocalJson(AAssetManager* assetManager, double userLat, double userLon, double radius);
+    bool isInsideBC(double lat, double lon);
 };
 
 #endif
