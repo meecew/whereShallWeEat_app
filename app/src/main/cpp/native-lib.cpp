@@ -44,7 +44,6 @@ Java_com_example_myapplication_MainActivity_fetchAmenitiesPlainTextNative(
     for (const auto& [type, items] : amenitiesGroup) {
         ss << "<b>" << type << ": " << items.size() << "</b><br>";
         for (const auto& item : items) {
-            ss << "&nbsp;&nbsp;";
             if (item.distance < 1.0) {
                 ss << std::fixed << std::setprecision(2) << item.distance * 1000.0 << " m";
             } else {
