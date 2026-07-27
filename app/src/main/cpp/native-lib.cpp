@@ -132,7 +132,7 @@ Java_com_example_myapplication_MainActivity_fetchRandomAmenityNative(
         }
 
         for (const auto& [type, items] : amenitiesGroup) {
-            ss << type << ": " << items.size() << "\n";
+            ss << "<b>" << type << ": " << items.size() << "</b><br>";
             for (const auto& item : items) {
                 bool isPicked = (item.name == selected.name && item.lat == selected.lat && item.lon == selected.lon);
 
