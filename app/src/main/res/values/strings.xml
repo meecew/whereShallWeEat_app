@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WhereShallWeEat?</string>
+    <string name="app_name">WSWE?</string>
     <string name="hint_lat">Lat</string>
     <string name="hint_lon">Lon</string>
     <string name="hint_radius">Rad(m)</string>

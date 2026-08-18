@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.myapplication"
+    namespace = "com.meowcow.whereshallweeat"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.myapplication"
+        applicationId = "com.meowcow.whereshallweeat"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

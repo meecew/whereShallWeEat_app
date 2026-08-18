@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.meowcow.whereshallweeat
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

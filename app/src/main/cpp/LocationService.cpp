@@ -91,7 +91,7 @@ void LocationService::printAddress(double lat, double lon) {
     std::string responseBuffer;
     
     struct curl_slist* headers = NULL;
-    headers = curl_slist_append(headers, "User-Agent: myApp/1.0 (kylehuangcanada@gmail.com)");
+    headers = curl_slist_append(headers, "User-Agent: whereShallWeEat/1.0 (meowcowbusiness@gmail.com)");
 
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);

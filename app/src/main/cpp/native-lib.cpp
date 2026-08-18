@@ -11,7 +11,7 @@
 static LocationService gLocServ;
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_myapplication_MainActivity_fetchAmenitiesPlainTextNative(
+Java_com_meowcow_whereshallweeat_MainActivity_fetchAmenitiesPlainTextNative(
         JNIEnv* env,
         jobject thiz,
         jdouble lat,
@@ -58,7 +58,7 @@ Java_com_example_myapplication_MainActivity_fetchAmenitiesPlainTextNative(
 }
 
 extern "C" JNIEXPORT jdoubleArray JNICALL
-Java_com_example_myapplication_MainActivity_getIpLocationNative(
+Java_com_meowcow_whereshallweeat_MainActivity_getIpLocationNative(
         JNIEnv* env,
         jobject /* this */) {
 
@@ -71,7 +71,7 @@ Java_com_example_myapplication_MainActivity_getIpLocationNative(
 }
 
 extern "C" JNIEXPORT jdoubleArray JNICALL
-Java_com_example_myapplication_MainActivity_getGpsLocationNative(
+Java_com_meowcow_whereshallweeat_MainActivity_getGpsLocationNative(
         JNIEnv* env,
         jobject /* this */) {
 
@@ -84,7 +84,7 @@ Java_com_example_myapplication_MainActivity_getGpsLocationNative(
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_example_myapplication_MainActivity_updateGpsLocationNative(
+Java_com_meowcow_whereshallweeat_MainActivity_updateGpsLocationNative(
         JNIEnv* env,
         jobject /* this */,
         jdouble lat,
@@ -94,7 +94,7 @@ Java_com_example_myapplication_MainActivity_updateGpsLocationNative(
 }
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_myapplication_MainActivity_fetchRandomAmenityNative(
+Java_com_meowcow_whereshallweeat_MainActivity_fetchRandomAmenityNative(
         JNIEnv* env,
         jobject thiz,
         jdouble lat,
@@ -119,7 +119,7 @@ Java_com_example_myapplication_MainActivity_fetchRandomAmenityNative(
     } else {
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(0, amenities.size() - 1);
+        std::uniform_int_distribution<int> dis(0, static_cast<int>(amenities.size()) - 1);
         int randomIndex = dis(gen);
         Amenity selected = amenities[randomIndex];
 

@@ -9,7 +9,7 @@ def fetch_bc_foodies():
 
     # Updated headers to satisfy the server's security/integrity checks
     headers = {
-        'User-Agent': 'KyleFoodieFetcher/1.0 (kyle-contact-placeholder)', # Identify your script
+        'User-Agent': 'MeowCowFoodieFetcher/1.0 (meowcowbusiness@gmail.com)', # Identify your script
         'Accept': 'application/json',
         'Content-Type': 'application/x-www-form-urlencoded'
     }
@@ -24,15 +24,9 @@ def fetch_bc_foodies():
     out center;
     """
 
-    print("--- BC Foodie Fetcher ---")
-    print("Sending request to Overpass API...")
-    print("Including proper headers to avoid 406 error.")
-    print("Searching the entire province. Please wait (1-3 minutes)...")
-
     start_time = time.time()
 
     try:
-        # We use a POST request with the 'data' parameter
         response = requests.post(
             url,
             data={'data': query},
